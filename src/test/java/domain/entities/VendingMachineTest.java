@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class VendingMachineTest {
 
   @Nested
-  class Coins {
+  class AcceptCoins {
 
     @Test
     void shouldGetCurrentAmountOfOneCoin() {
@@ -22,7 +22,7 @@ class VendingMachineTest {
 
       vendingMachine.insertCoin(nickel);
 
-      assertEquals(expected, vendingMachine.getCurrentAmount());
+      assertEquals(expected, vendingMachine.getAmountOfInsertedCoins());
     }
 
     @Test
@@ -34,7 +34,7 @@ class VendingMachineTest {
       vendingMachine.insertCoin(nickel);
       vendingMachine.insertCoin(nickel);
 
-      assertEquals(expected, vendingMachine.getCurrentAmount());
+      assertEquals(expected, vendingMachine.getAmountOfInsertedCoins());
     }
 
     @Test
@@ -49,18 +49,18 @@ class VendingMachineTest {
       vendingMachine.insertCoin(dime);
       vendingMachine.insertCoin(quarters);
 
-      assertEquals(expected.getValue(), vendingMachine.getCurrentAmount().getValue());
+      assertEquals(expected.getValue(), vendingMachine.getAmountOfInsertedCoins().getValue());
     }
 
     @Test
     void shouldNotAllowInvalidCoins() {
       VendingMachine vendingMachine = new VendingMachine();
-      Pennie pennie = new Pennie();
-      Amount expected = new Amount(0.0F);
+      Pennie pennie = new Pennie();//TODO Value 0?
+      Amount expected = Amount.empty(); //TODO Rename?
 
       vendingMachine.insertCoin(pennie);
 
-      assertEquals(expected, vendingMachine.getCurrentAmount());
+      assertEquals(expected, vendingMachine.getAmountOfInsertedCoins());
     }
   }
 
@@ -70,9 +70,20 @@ class VendingMachineTest {
     @Test
     void shouldDisplayNoCoinsMessageWhenHasNotCoins() {
       VendingMachine vendingMachine = new VendingMachine();
-      String expected = "INSERT COIN";
+      String expected = VendingMachine.NO_COINS_MESSAGE;
 
-      vendingMachine.insertCoin(null);
+      String displayMessage = vendingMachine.getDisplayMessage();
+
+      assertEquals(expected, displayMessage);
+    }
+
+    @Test
+    void shouldDisplayNoCoinsMessageWhenHasInsertOnlyInvalidCoins() {
+      VendingMachine vendingMachine = new VendingMachine();
+      Pennie pennie = new Pennie();
+      String expected = VendingMachine.NO_COINS_MESSAGE;
+
+      vendingMachine.insertCoin(pennie);
 
       assertEquals(expected, vendingMachine.getDisplayMessage());
     }
@@ -90,6 +101,72 @@ class VendingMachineTest {
       vendingMachine.insertCoin(pennie);
 
       assertEquals(expected, vendingMachine.getDisplayMessage());
+    }
+  }
+
+  @Nested
+  class DisplaySelectProducts {
+
+    @Test
+    void shouldProductNotBeDispensedWhenHasNotEnoughMoney() {
+      VendingMachine vendingMachine = new VendingMachine();
+      Quarters quarters = new Quarters();
+      Product chips = chipsProduct();
+      String expected = "PRICE 0,50 €";
+
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.requestProduct(chips);
+
+      assertEquals(expected, vendingMachine.getDisplayMessage());
+    }
+
+    @Test
+    void shouldProductBeDispensedWhenCoinsValueExactlyCoversTheProductPrice() {
+      VendingMachine vendingMachine = new VendingMachine();
+      Quarters quarters = new Quarters();
+      Product chips = chipsProduct();
+      String expected = VendingMachine.PRODUCT_DISPENSED_MESSAGE;
+
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.requestProduct(chips);
+
+      assertEquals(expected, vendingMachine.getDisplayMessage());
+    }
+
+    @Test
+    void shouldProductBeDispensedWhenCoinsValueExceedsTheProductPrice() {
+      VendingMachine vendingMachine = new VendingMachine();
+      Quarters quarters = new Quarters();
+      Product chips = chipsProduct();
+      String expected = VendingMachine.PRODUCT_DISPENSED_MESSAGE;
+
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.requestProduct(chips);
+
+      assertEquals(expected, vendingMachine.getDisplayMessage());
+    }
+
+    @Test
+    void shouldFoo() {
+      VendingMachine vendingMachine = new VendingMachine();
+      Quarters quarters = new Quarters();
+      Product chips = chipsProduct();
+      String expected = VendingMachine.NO_COINS_MESSAGE;
+
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.insertCoin(quarters);
+      vendingMachine.requestProduct(chips);
+      vendingMachine.getDisplayMessage();
+
+      assertEquals(expected, vendingMachine.getDisplayMessage());
+    }
+
+    private Product chipsProduct() {
+      return new Product("Chips", new Amount(0.50F));
     }
   }
 }
