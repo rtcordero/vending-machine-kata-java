@@ -4,10 +4,17 @@ import java.util.Objects;
 
 public class Amount {
 
+  public boolean isGreaterOrEqualThan(Amount other) {
+    return value >= other.value;
+  }
+
   private float value;
 
   public Amount(float value) {
     this.value = value;
+  }
+  public static Amount empty() {
+    return new Amount(0.0F);
   }
 
   public float getValue() {

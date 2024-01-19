@@ -6,18 +6,34 @@ import domain.entities.coins.Coin;
 
 public class VendingMachine {
 
+  public static final String NO_COINS_MESSAGE = "INSERT COIN";
+
+  public static final String PRODUCT_DISPENSED_MESSAGE = "THANK YOU";
+
   private final ArrayList<Coin> coins = new ArrayList<>();
 
-  private static final String NO_COINS_MESSAGE = "INSERT COIN";
+  private String displayMessage = NO_COINS_MESSAGE;
 
-  public void insertCoin(Coin coin) {
-    if (coin != null) {
-      this.coins.add(coin);
+  public void requestProduct(Product product) {
+    if (getAmountOfInsertedCoins().isGreaterOrEqualThan(product.getPrice())) {
+      coins.clear();
+      setDisplayMessage(PRODUCT_DISPENSED_MESSAGE);
+    } else {
+      setDisplayMessage(getNotEnoughMoneyMessage(product));
     }
   }
 
-  public Amount getCurrentAmount() {
-    Amount currentAmount = new Amount(0.0F);
+  public void insertCoin(Coin coin) {
+    this.coins.add(coin);
+    if (getAmountOfInsertedCoins().isGreaterThanZero()) {
+      setDisplayMessage(getAmountFormattedToDisplay(getAmountOfInsertedCoins()));
+    } else {
+      setDisplayMessage(NO_COINS_MESSAGE);
+    }
+  }
+
+  public Amount getAmountOfInsertedCoins() {
+    Amount currentAmount = Amount.empty();
     coins.forEach(
         coin -> currentAmount.sumAmount(coin.getValue())
     );
@@ -25,10 +41,15 @@ public class VendingMachine {
   }
 
   public String getDisplayMessage() {
-    if (getCurrentAmount().isGreaterThanZero()) {
-      return getAmountFormattedToDisplay(getCurrentAmount());
-    }
-    return NO_COINS_MESSAGE;
+    return displayMessage;
+  }
+
+  public void setDisplayMessage(String displayMessage) {
+    this.displayMessage = displayMessage;
+  }
+
+  private String getNotEnoughMoneyMessage(Product product) {
+    return "PRICE " + getAmountFormattedToDisplay(product.getPrice());
   }
 
   private String getAmountFormattedToDisplay(Amount amount) {
