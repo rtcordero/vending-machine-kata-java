@@ -6,10 +6,6 @@ public class Amount {
 
   private float value;
 
-  public Amount() {
-    this.value = 0.0F;
-  }
-
   public Amount(float value) {
     this.value = value;
   }

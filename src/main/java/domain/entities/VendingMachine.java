@@ -17,7 +17,7 @@ public class VendingMachine {
   }
 
   public Amount getCurrentAmount() {
-    Amount currentAmount = new Amount();
+    Amount currentAmount = new Amount(0.0F);
     coins.forEach(
         coin -> currentAmount.sumAmount(coin.getValue())
     );

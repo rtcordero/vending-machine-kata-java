@@ -56,7 +56,7 @@ class VendingMachineTest {
     void shouldNotAllowInvalidCoins() {
       VendingMachine vendingMachine = new VendingMachine();
       Pennie pennie = new Pennie();
-      Amount expected = new Amount();
+      Amount expected = new Amount(0.0F);
 
       vendingMachine.insertCoin(pennie);
 
