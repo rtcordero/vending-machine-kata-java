@@ -6,6 +6,6 @@ public class Dime implements Coin {
 
   @Override
   public Amount getValue() {
-    return new Amount(0.15F);
+    return new Amount(0.10F);
   }
 }

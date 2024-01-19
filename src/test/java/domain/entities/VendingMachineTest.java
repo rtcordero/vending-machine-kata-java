@@ -49,7 +49,7 @@ class VendingMachineTest {
       vendingMachine.insertCoin(dime);
       vendingMachine.insertCoin(quarters);
 
-      assertEquals(expected, vendingMachine.getCurrentAmount());
+      assertEquals(expected.getValue(), vendingMachine.getCurrentAmount().getValue());
     }
 
     @Test
